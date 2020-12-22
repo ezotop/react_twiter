@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import App from './components/app/'; //Если вебпаку не сказать какой файл нужно импортировать, то он по умолчанию берез .js
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
