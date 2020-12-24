@@ -1,16 +1,43 @@
 import React from 'react';
 
 import PostlistItem from '../post-list-item';
+import { ListGroup } from 'reactstrap';
 
 import './post-list.css';
 
-const Postlist = () => {
+const Postlist = ({posts}) => {
+    
+    const elements = posts.map((item) => {
+
+        if (typeof item === 'object' && isEmpty(item) && item.label) {
+            const {id, ...itemProps} = item;
+
+            return (
+                <li key={id} className="list-group-item"> {/* Передаем id чтобы реакт запомнил какие элементы были на странице, чтобы не рендерить их заново. А новый обьект из сервера с новым id зарендерить */}
+                    {/* <PostlistItem
+                    label={item.label}
+                    important={item.important} /> */}
+                    <PostlistItem {...itemProps} /> {/* Поскольку свойство и значение совпадают,то можно использовать spred оператор */}
+                </li>
+            )
+        }
+        return false;
+    });
+
+    function isEmpty(obj) {
+        for (let key in obj) {
+            return true;
+        }
+        return false;
+    }
+
     return (
-        <ul className="app-list list-group">
-            <PostlistItem/>
-            <PostlistItem/>
-            <PostlistItem/>
-        </ul>
+        <ListGroup className="app-list">
+            {elements}
+        </ListGroup>
+        // <ul className="app-list list-group">
+        //     {elements}
+        // </ul>
     )
 }
 
