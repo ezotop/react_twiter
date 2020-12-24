@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 import App from './components/app/'; //Если вебпаку не сказать какой файл нужно импортировать, то он по умолчанию берез .js
 import reportWebVitals from './reportWebVitals';
