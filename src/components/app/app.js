@@ -24,15 +24,17 @@ export default class App extends Component {
         super(props);
         this.state = {
             data : [
-                {label: 'Going to learn react', important: true, id: 1}, /* id обьекта это набор символов создаваемый на сервере */
-                {label: 'That is so good', important: false, id: 2},
-                {label: 'I need a break...', important: false, id: 3}
+                {label: 'Going to learn react', important: false, like: false, id: 1}, /* id обьекта это набор символов создаваемый на сервере */
+                {label: 'That is so good', important: false, like: false, id: 2},
+                {label: 'I need a break...', important: false, like: false, id: 3}
             ]
         }
         this.deleteItem = this.deleteItem.bind(this);
         this.addItem = this.addItem.bind(this);
+        this.onToggleImportant = this.onToggleImportant.bind(this);
+        this.onToggleLike = this.onToggleLike.bind(this);
 
-        this.maxId = 4;
+        //this.maxId = 4;
     }
 
     deleteItem(id) {
@@ -52,8 +54,31 @@ export default class App extends Component {
         const newItem = {
             label: body,
             important: false,
-            id: this.maxId++
         }
+
+        let keys = [];
+        this.state.data.forEach(obj => {
+            keys.push(obj.id);
+        });
+
+        const getId = (n = 7) => {
+            const symbols = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'g', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            let newId;
+            for (let i = 0; i < n; i++) {
+                newId += symbols[Math.round(Math.random() * (symbols.length))] + '';
+            }
+            return newId;
+        }
+        getId();
+        
+
+        keys.forEach(key => {
+            if (key === getId) {
+                getId();
+            } else {
+                newItem.id = getId().replace(/^undefined/gi, '');
+            }
+        });
 
         this.setState(({data}) => {
             const newArr = [...data, newItem];
@@ -63,17 +88,53 @@ export default class App extends Component {
         });
     }
 
+    onToggleImportant(id) {
+        this.setState(({data}) => {
+            const index = data.findIndex(elem => elem.id === id);
+
+            const old = data[index];
+            const newItem = {...old, important: !old.important}; //То что идет за обьектом, перезапишет свойство старого обьекта
+            const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)];
+
+            return {
+                data: newArr
+            }
+        });
+    }
+
+    onToggleLike(id) {
+        this.setState(({data}) => {
+            const index = data.findIndex(elem => elem.id === id);
+
+            const old = data[index];
+            const newItem = {...old, like: !old.like}; //То что идет за обьектом, перезапишет свойство старого обьекта
+            const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)];
+
+            return {
+                data: newArr
+            }
+        });
+    }
+
     render() {
+        const {data} = this.state;
+        const liked = data.filter(item => item.like).length; //Получаем к-во элементов в массиве у которых like стоит в true
+        const allPosts = data.length; //К-во всех постов
+        // console.log(this.state.data);
         return (
             <AppBlock>
-                <AppHeader/>
+                <AppHeader
+                liked={liked}
+                allPosts={allPosts}/>
                 <div className="search-panel d-flex">
                     <SearchPanel/>
                     <PostStatusFilter/>
                 </div>
                     <Postlist
                     posts={this.state.data}
-                    onDelete={this.deleteItem}/>
+                    onDelete={this.deleteItem}
+                    onToggleImportant={this.onToggleImportant}
+                    onToggleLike={this.onToggleLike}/>
                     <PostAddForm
                     onAdd={this.addItem}/>
             </AppBlock>
