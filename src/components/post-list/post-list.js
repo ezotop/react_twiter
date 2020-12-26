@@ -5,7 +5,7 @@ import { ListGroup } from 'reactstrap';
 
 import './post-list.css';
 
-const Postlist = ({posts}) => {
+const Postlist = ({posts, onDelete}) => {
     
     const elements = posts.map((item) => {
 
@@ -14,10 +14,9 @@ const Postlist = ({posts}) => {
 
             return (
                 <li key={id} className="list-group-item"> {/* Передаем id чтобы реакт запомнил какие элементы были на странице, чтобы не рендерить их заново. А новый обьект из сервера с новым id зарендерить */}
-                    {/* <PostlistItem
-                    label={item.label}
-                    important={item.important} /> */}
-                    <PostlistItem {...itemProps} /> {/* Поскольку свойство и значение совпадают,то можно использовать spred оператор */}
+                    <PostlistItem 
+                        {...itemProps}
+                        onDelete={() => onDelete(id)} /> {/* Поскольку свойство и значение совпадают,то можно использовать spred оператор */}
                 </li>
             )
         }
