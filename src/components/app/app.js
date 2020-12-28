@@ -24,15 +24,19 @@ export default class App extends Component {
         super(props);
         this.state = {
             data : [
-                {label: 'Going to learn react', important: false, like: false, id: 1}, /* id обьекта это набор символов создаваемый на сервере */
+                {label: 'Going to learn React', important: false, like: false, id: 1}, /* id обьекта это набор символов создаваемый на сервере */
                 {label: 'That is so good', important: false, like: false, id: 2},
                 {label: 'I need a break...', important: false, like: false, id: 3}
-            ]
+            ],
+            term: '',
+            filter: 'all'
         }
         this.deleteItem = this.deleteItem.bind(this);
         this.addItem = this.addItem.bind(this);
         this.onToggleImportant = this.onToggleImportant.bind(this);
         this.onToggleLike = this.onToggleLike.bind(this);
+        this.onUpdateSearch = this.onUpdateSearch.bind(this);
+        this.onFilterSelect = this.onFilterSelect.bind(this);
 
         //this.maxId = 4;
     }
@@ -116,22 +120,54 @@ export default class App extends Component {
         });
     }
 
+    searchPost(items, term) {
+        if (term.length === 0) {
+            return items;
+        }
+
+        return items.filter((item) => {
+            return item.label.indexOf(term) > -1
+        });
+    }
+
+    filterPost(items, filter) {
+        if (filter === 'like') {
+            return items.filter(item => item.like);
+        } else {
+            return items
+        }
+    }
+
+    onUpdateSearch(term) {
+        this.setState({term});
+    }
+
+    onFilterSelect(filter) {
+        this.setState({filter});
+    }
+
     render() {
-        const {data} = this.state;
+        const {data, term, filter} = this.state;
+
         const liked = data.filter(item => item.like).length; //Получаем к-во элементов в массиве у которых like стоит в true
         const allPosts = data.length; //К-во всех постов
-        // console.log(this.state.data);
+
+        const visiblePosts = this.filterPost(this.searchPost(data, term), filter);
+
         return (
             <AppBlock>
                 <AppHeader
                 liked={liked}
                 allPosts={allPosts}/>
                 <div className="search-panel d-flex">
-                    <SearchPanel/>
-                    <PostStatusFilter/>
+                    <SearchPanel
+                    onUpdateSearch={this.onUpdateSearch}/>
+                    <PostStatusFilter
+                    filter={filter}
+                    onFilterSelect={this.onFilterSelect}/>
                 </div>
                     <Postlist
-                    posts={this.state.data}
+                    posts={visiblePosts}
                     onDelete={this.deleteItem}
                     onToggleImportant={this.onToggleImportant}
                     onToggleLike={this.onToggleLike}/>
